@@ -52,6 +52,8 @@ export function getCostByCategory(items: StockItem[]): Record<Category, number> 
     '日用品': 0,
     'ヘルスケア': 0,
     '食品': 0,
+    'ハウスワーク': 0,
+    '定期メンテナンス': 0,
     'その他': 0,
   };
   for (const item of items) {
