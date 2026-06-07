@@ -19,6 +19,8 @@ interface StockItemListProps {
   onRestock: (item: StockItem) => void;
   onEdit: (item: StockItem) => void;
   onDelete: (item: StockItem) => void;
+  onHistory: (item: StockItem) => void;
+  onDateCorrect: (item: StockItem) => void;
   onAddItem: () => void;
 }
 
@@ -38,6 +40,8 @@ export function StockItemList({
   onRestock,
   onEdit,
   onDelete,
+  onHistory,
+  onDateCorrect,
   onAddItem,
 }: StockItemListProps) {
   const [showSortMenu, setShowSortMenu] = useState(false);
@@ -128,6 +132,8 @@ export function StockItemList({
                 onRestock={onRestock}
                 onEdit={onEdit}
                 onDelete={onDelete}
+                onHistory={onHistory}
+                onDateCorrect={onDateCorrect}
               />
             ))}
           </div>
