@@ -1,11 +1,20 @@
 'use client';
 
 import { useState } from 'react';
-import { X, Package, ClipboardList } from 'lucide-react';
+import { X, Package, ClipboardList, Info } from 'lucide-react';
 import { CyclePicker } from './CyclePicker';
 import { Button } from '@/components/ui/Button';
 import { CATEGORIES } from '@/types';
 import type { ItemType, StockItem, StockItemInput, Category } from '@/types';
+
+const CATEGORY_HELP: { name: Category; examples: string }[] = [
+  { name: '日用品',       examples: 'シャンプー・洗剤・トイレットペーパーなど' },
+  { name: 'ヘルスケア',   examples: 'サプリ・コンタクト・薬・歯ブラシなど' },
+  { name: '食品',         examples: 'プロテイン・調味料・保存食など' },
+  { name: 'ハウスワーク', examples: '掃除・洗濯・料理など定期的な家事' },
+  { name: '定期メンテナンス', examples: 'エアコン掃除・オイル交換・電池交換など' },
+  { name: 'その他',       examples: '上記に当てはまらないもの' },
+];
 
 interface ItemFormProps {
   item?: StockItem;
@@ -27,6 +36,7 @@ export function ItemForm({ item, onSave, onCancel }: ItemFormProps) {
 
   const isTask = type === 'task';
   const isValid = name.trim().length > 0 && cycleDays >= 1;
+  const [showCategoryHelp, setShowCategoryHelp] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -117,9 +127,31 @@ export function ItemForm({ item, onSave, onCancel }: ItemFormProps) {
 
           {/* Category */}
           <div>
-            <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1.5">
-              カテゴリ
-            </label>
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                カテゴリ
+              </label>
+              <button
+                type="button"
+                onClick={() => setShowCategoryHelp((v) => !v)}
+                className="flex items-center gap-1 text-xs text-indigo-500 hover:text-indigo-600 transition-colors"
+              >
+                <Info className="w-3.5 h-3.5" />
+                {showCategoryHelp ? '閉じる' : '選び方'}
+              </button>
+            </div>
+
+            {showCategoryHelp && (
+              <div className="mb-3 rounded-xl bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 divide-y divide-zinc-200 dark:divide-zinc-700 text-xs overflow-hidden">
+                {CATEGORY_HELP.map(({ name, examples }) => (
+                  <div key={name} className="px-3 py-2">
+                    <span className="font-semibold text-zinc-700 dark:text-zinc-200">{name}</span>
+                    <span className="text-zinc-400 ml-1.5">{examples}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+
             <div className="grid grid-cols-2 gap-2">
               {CATEGORIES.map((cat) => (
                 <button
