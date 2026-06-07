@@ -19,6 +19,11 @@ export const CATEGORIES: Category[] = [
   'その他',
 ];
 
+export const CATEGORIES_BY_TYPE: Record<ItemType, Category[]> = {
+  item: ['日用品', 'ヘルスケア', '食品', 'その他'],
+  task: ['ハウスワーク', '定期メンテナンス', 'その他'],
+};
+
 export const CATEGORY_ICONS: Record<Category, string> = {
   '日用品': 'home',
   'ヘルスケア': 'heart-pulse',

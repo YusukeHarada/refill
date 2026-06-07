@@ -4,17 +4,17 @@ import { useState } from 'react';
 import { X, Package, ClipboardList, Info } from 'lucide-react';
 import { CyclePicker } from './CyclePicker';
 import { Button } from '@/components/ui/Button';
-import { CATEGORIES } from '@/types';
+import { CATEGORIES_BY_TYPE } from '@/types';
 import type { ItemType, StockItem, StockItemInput, Category } from '@/types';
 
-const CATEGORY_HELP: { name: Category; examples: string }[] = [
-  { name: '日用品',       examples: 'シャンプー・洗剤・トイレットペーパーなど' },
-  { name: 'ヘルスケア',   examples: 'サプリ・コンタクト・薬・歯ブラシなど' },
-  { name: '食品',         examples: 'プロテイン・調味料・保存食など' },
-  { name: 'ハウスワーク', examples: '掃除・洗濯・料理など定期的な家事' },
-  { name: '定期メンテナンス', examples: 'エアコン掃除・オイル交換・電池交換など' },
-  { name: 'その他',       examples: '上記に当てはまらないもの' },
-];
+const CATEGORY_HELP: Record<Category, string> = {
+  '日用品':       'シャンプー・洗剤・トイレットペーパーなど',
+  'ヘルスケア':   'サプリ・コンタクト・薬・歯ブラシなど',
+  '食品':         'プロテイン・調味料・保存食など',
+  'ハウスワーク': '掃除・洗濯など定期的な家事',
+  '定期メンテナンス': 'エアコン掃除・オイル交換・電池交換など',
+  'その他':       '上記に当てはまらないもの',
+};
 
 interface ItemFormProps {
   item?: StockItem;
@@ -37,6 +37,13 @@ export function ItemForm({ item, onSave, onCancel }: ItemFormProps) {
   const isTask = type === 'task';
   const isValid = name.trim().length > 0 && cycleDays >= 1;
   const [showCategoryHelp, setShowCategoryHelp] = useState(false);
+  const availableCategories = CATEGORIES_BY_TYPE[type];
+
+  function handleTypeChange(newType: ItemType) {
+    setType(newType);
+    const cats = CATEGORIES_BY_TYPE[newType];
+    if (!cats.includes(category)) setCategory(cats[0]);
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -86,7 +93,7 @@ export function ItemForm({ item, onSave, onCancel }: ItemFormProps) {
             <div className="grid grid-cols-2 gap-2">
               <button
                 type="button"
-                onClick={() => setType('item')}
+                onClick={() => handleTypeChange('item')}
                 className={`flex items-center justify-center gap-2 px-3 py-3 rounded-xl text-sm font-medium transition-colors border ${
                   type === 'item'
                     ? 'bg-indigo-600 text-white border-indigo-600'
@@ -98,7 +105,7 @@ export function ItemForm({ item, onSave, onCancel }: ItemFormProps) {
               </button>
               <button
                 type="button"
-                onClick={() => setType('task')}
+                onClick={() => handleTypeChange('task')}
                 className={`flex items-center justify-center gap-2 px-3 py-3 rounded-xl text-sm font-medium transition-colors border ${
                   type === 'task'
                     ? 'bg-indigo-600 text-white border-indigo-600'
@@ -143,17 +150,17 @@ export function ItemForm({ item, onSave, onCancel }: ItemFormProps) {
 
             {showCategoryHelp && (
               <div className="mb-3 rounded-xl bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 divide-y divide-zinc-200 dark:divide-zinc-700 text-xs overflow-hidden">
-                {CATEGORY_HELP.map(({ name, examples }) => (
-                  <div key={name} className="px-3 py-2">
-                    <span className="font-semibold text-zinc-700 dark:text-zinc-200">{name}</span>
-                    <span className="text-zinc-400 ml-1.5">{examples}</span>
+                {availableCategories.map((cat) => (
+                  <div key={cat} className="px-3 py-2">
+                    <span className="font-semibold text-zinc-700 dark:text-zinc-200">{cat}</span>
+                    <span className="text-zinc-400 ml-1.5">{CATEGORY_HELP[cat]}</span>
                   </div>
                 ))}
               </div>
             )}
 
             <div className="grid grid-cols-2 gap-2">
-              {CATEGORIES.map((cat) => (
+              {availableCategories.map((cat) => (
                 <button
                   key={cat}
                   type="button"
