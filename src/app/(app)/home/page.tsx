@@ -4,9 +4,11 @@ import { useState } from 'react';
 import { Plus } from 'lucide-react';
 import { StockItemList } from '@/components/home/StockItemList';
 import { ItemForm } from '@/components/forms/ItemForm';
+import { ItemHistoryModal } from '@/components/home/ItemHistoryModal';
+import { DateCorrectionModal } from '@/components/home/DateCorrectionModal';
 import { useAuth } from '@/contexts/AuthContext';
 import { useItems } from '@/hooks/useItems';
-import { addItem, updateItem, deleteItem, refillItem, restockItem } from '@/lib/firestore';
+import { addItem, updateItem, deleteItem, refillItem, restockItem, updateLastUsedDate } from '@/lib/firestore';
 import type { StockItem, StockItemInput, SortOrder, Category } from '@/types';
 
 export default function HomePage() {
@@ -16,7 +18,8 @@ export default function HomePage() {
   const [sortOrder, setSortOrder] = useState<SortOrder>('deadline');
   const [filterCategory, setFilterCategory] = useState<Category | undefined>();
   const [formState, setFormState] = useState<{ open: boolean; item?: StockItem }>({ open: false });
-  const [deleteTarget, setDeleteTarget] = useState<StockItem | null>(null);
+  const [historyItem, setHistoryItem] = useState<StockItem | null>(null);
+  const [dateCorrectionItem, setDateCorrectionItem] = useState<StockItem | null>(null);
 
   const { items, loading } = useItems(householdId, sortOrder, filterCategory);
 
@@ -45,13 +48,18 @@ export default function HomePage() {
   }
 
   async function handleRefill(item: StockItem) {
-    if (!householdId) return;
-    await refillItem(householdId, item);
+    if (!householdId || !profile) return;
+    await refillItem(householdId, item, profile.uid);
   }
 
   async function handleRestock(item: StockItem) {
     if (!householdId) return;
     await restockItem(householdId, item.id, 1);
+  }
+
+  async function handleDateCorrect(date: Date) {
+    if (!householdId || !dateCorrectionItem) return;
+    await updateLastUsedDate(householdId, dateCorrectionItem.id, date);
   }
 
   if (formState.open) {
@@ -95,10 +103,28 @@ export default function HomePage() {
             onRestock={handleRestock}
             onEdit={(item) => setFormState({ open: true, item })}
             onDelete={handleDelete}
+            onHistory={setHistoryItem}
+            onDateCorrect={setDateCorrectionItem}
             onAddItem={() => setFormState({ open: true })}
           />
         )}
       </div>
+
+      {historyItem && householdId && (
+        <ItemHistoryModal
+          householdId={householdId}
+          item={historyItem}
+          onClose={() => setHistoryItem(null)}
+        />
+      )}
+
+      {dateCorrectionItem && (
+        <DateCorrectionModal
+          item={dateCorrectionItem}
+          onSave={handleDateCorrect}
+          onClose={() => setDateCorrectionItem(null)}
+        />
+      )}
     </div>
   );
 }

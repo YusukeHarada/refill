@@ -1,6 +1,6 @@
 'use client';
 
-import { Home, Utensils, Package, Sparkles, Wrench, RefreshCw, Plus, Pencil, Trash2, CheckCircle2 } from 'lucide-react';
+import { Home, Utensils, Package, Sparkles, Wrench, RefreshCw, Plus, Pencil, Trash2, CheckCircle2, Clock, CalendarDays } from 'lucide-react';
 import { ProgressBar } from './ProgressBar';
 import { Button } from '@/components/ui/Button';
 import { cn, getProgressRatio, getRemainingDays, getStatusColor, formatCurrency, formatRemainingDays, getDailyCost } from '@/lib/utils';
@@ -20,9 +20,11 @@ interface StockItemCardProps {
   onRestock: (item: StockItem) => void;
   onEdit: (item: StockItem) => void;
   onDelete: (item: StockItem) => void;
+  onHistory: (item: StockItem) => void;
+  onDateCorrect: (item: StockItem) => void;
 }
 
-export function StockItemCard({ item, onRefill, onRestock, onEdit, onDelete }: StockItemCardProps) {
+export function StockItemCard({ item, onRefill, onRestock, onEdit, onDelete, onHistory, onDateCorrect }: StockItemCardProps) {
   const ratio = getProgressRatio(item);
   const color = getStatusColor(ratio);
   const remaining = getRemainingDays(item);
@@ -125,6 +127,12 @@ export function StockItemCard({ item, onRefill, onRestock, onEdit, onDelete }: S
             </Button>
           </>
         )}
+        <Button variant="ghost" size="icon" onClick={() => onHistory(item)} title="履歴">
+          <Clock className="w-4 h-4" />
+        </Button>
+        <Button variant="ghost" size="icon" onClick={() => onDateCorrect(item)} title="日付修正">
+          <CalendarDays className="w-4 h-4" />
+        </Button>
         <Button variant="ghost" size="icon" onClick={() => onEdit(item)} title="編集">
           <Pencil className="w-4 h-4" />
         </Button>

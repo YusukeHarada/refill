@@ -15,6 +15,10 @@ import {
 } from 'firebase/firestore';
 import { db } from './firebase';
 import type { StockItem, StockItemInput, Household, UserProfile } from '@/types';
+
+function historyRef(householdId: string, itemId: string) {
+  return collection(db, 'households', householdId, 'items', itemId, 'history');
+}
 import { generateInviteCode } from './utils';
 
 // ─── User ──────────────────────────────────────────────────────────────────
@@ -133,17 +137,32 @@ export async function deleteItem(householdId: string, itemId: string): Promise<v
   await deleteDoc(doc(db, 'households', householdId, 'items', itemId));
 }
 
-export async function refillItem(householdId: string, item: StockItem): Promise<void> {
-  const ref = doc(db, 'households', householdId, 'items', item.id);
+export async function refillItem(householdId: string, item: StockItem, uid: string): Promise<void> {
+  const itemDocRef = doc(db, 'households', householdId, 'items', item.id);
+  const newHistoryRef = doc(historyRef(householdId, item.id));
+  const now = Timestamp.now();
+
   await runTransaction(db, async (tx) => {
-    const snap = await tx.get(ref);
+    const snap = await tx.get(itemDocRef);
     if (!snap.exists()) return;
     const current = snap.data() as StockItem;
-    tx.update(ref, {
-      lastUsedDate: Timestamp.now(),
+    tx.update(itemDocRef, {
+      lastUsedDate: now,
       stockQuantity: Math.max(0, current.stockQuantity - 1),
-      updatedAt: Timestamp.now(),
+      updatedAt: now,
     });
+    tx.set(newHistoryRef, { executedAt: now, recordedBy: uid });
+  });
+}
+
+export async function updateLastUsedDate(
+  householdId: string,
+  itemId: string,
+  date: Date,
+): Promise<void> {
+  await updateDoc(doc(db, 'households', householdId, 'items', itemId), {
+    lastUsedDate: Timestamp.fromDate(date),
+    updatedAt: Timestamp.now(),
   });
 }
 

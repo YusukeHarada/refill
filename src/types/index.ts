@@ -82,6 +82,12 @@ export interface UserProfile {
   householdId?: string;
 }
 
+export interface HistoryEntry {
+  id: string;
+  executedAt: Timestamp;
+  recordedBy: string;
+}
+
 export type SortOrder = 'deadline' | 'category' | 'registrationOrder';
 
 export type StatusColor = 'green' | 'yellow' | 'red';
