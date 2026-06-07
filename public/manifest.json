@@ -1,0 +1,22 @@
+{
+  "name": "Refill - スマート在庫管理",
+  "short_name": "Refill",
+  "description": "日用品の消費サイクルを可視化し、買い足しタイミングを予測するアプリ",
+  "start_url": "/home",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#4f46e5",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
