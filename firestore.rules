@@ -20,6 +20,12 @@ service cloud.firestore {
         allow read, write: if request.auth != null
           && request.auth.uid in get(/databases/$(database)/documents/households/$(householdId)).data.members;
       }
+
+      // Item history is accessible only to household members
+      match /items/{itemId}/history/{historyId} {
+        allow read, write: if request.auth != null
+          && request.auth.uid in get(/databases/$(database)/documents/households/$(householdId)).data.members;
+      }
     }
 
     // Allow read on households by invite code (for joining)
