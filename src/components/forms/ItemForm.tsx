@@ -42,7 +42,9 @@ export function ItemForm({ item, onSave, onCancel }: ItemFormProps) {
         memo: memo.trim() || undefined,
       });
     } catch (err) {
-      setError('保存に失敗しました。もう一度お試しください。');
+      console.error('[ItemForm] save failed:', err);
+      const msg = err instanceof Error ? err.message : String(err);
+      setError(`保存に失敗しました: ${msg}`);
     } finally {
       setSaving(false);
     }
