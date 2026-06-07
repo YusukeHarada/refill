@@ -1,13 +1,30 @@
 import { Timestamp } from 'firebase/firestore';
 
-export type Category = '日用品' | 'ヘルスケア' | '食品' | 'その他';
+export type ItemType = 'item' | 'task';
 
-export const CATEGORIES: Category[] = ['日用品', 'ヘルスケア', '食品', 'その他'];
+export type Category =
+  | '日用品'
+  | 'ヘルスケア'
+  | '食品'
+  | 'ハウスワーク'
+  | '定期メンテナンス'
+  | 'その他';
+
+export const CATEGORIES: Category[] = [
+  '日用品',
+  'ヘルスケア',
+  '食品',
+  'ハウスワーク',
+  '定期メンテナンス',
+  'その他',
+];
 
 export const CATEGORY_ICONS: Record<Category, string> = {
   '日用品': 'home',
   'ヘルスケア': 'heart-pulse',
   '食品': 'utensils',
+  'ハウスワーク': 'sparkles',
+  '定期メンテナンス': 'wrench',
   'その他': 'package',
 };
 
@@ -25,6 +42,7 @@ export interface StockItem {
   householdId: string;
   name: string;
   category: Category;
+  type: ItemType;
   price: number;
   cycleDays: number;
   stockQuantity: number;
@@ -40,6 +58,7 @@ export interface StockItem {
 export interface StockItemInput {
   name: string;
   category: Category;
+  type: ItemType;
   price: number;
   cycleDays: number;
   stockQuantity: number;
