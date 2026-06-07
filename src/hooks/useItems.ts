@@ -44,6 +44,8 @@ export function useItems(householdId?: string, sortOrder: SortOrder = 'deadline'
           ...data,
           // typeフィールドがない既存ドキュメントは 'item' として扱う
           type: data.type ?? 'item',
+          // ヘルスケアカテゴリは日用品に統合済み
+          category: data.category === 'ヘルスケア' ? '日用品' : data.category,
         } as StockItem;
       });
       const filtered = filterCategory ? raw.filter((i) => i.category === filterCategory) : raw;
