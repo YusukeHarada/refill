@@ -83,6 +83,11 @@ export async function regenerateInviteCode(householdId: string): Promise<string>
 
 // ─── Items ─────────────────────────────────────────────────────────────────
 
+// Firestore does not accept `undefined` — strip those keys before writing
+function omitUndefined(obj: Record<string, unknown>): Record<string, unknown> {
+  return Object.fromEntries(Object.entries(obj).filter(([, v]) => v !== undefined));
+}
+
 function itemsRef(householdId: string) {
   return collection(db, 'households', householdId, 'items');
 }
@@ -101,7 +106,7 @@ export async function addItem(
 ): Promise<string> {
   const registrationOrder = await getNextRegistrationOrder(householdId);
   const now = Timestamp.now();
-  const data = {
+  const data = omitUndefined({
     ...input,
     householdId,
     lastUsedDate: now,
@@ -109,7 +114,7 @@ export async function addItem(
     createdAt: now,
     updatedAt: now,
     createdBy: uid,
-  };
+  });
   const ref = await addDoc(itemsRef(householdId), data);
   return ref.id;
 }
@@ -119,10 +124,9 @@ export async function updateItem(
   itemId: string,
   input: Partial<StockItemInput>,
 ): Promise<void> {
-  await updateDoc(doc(db, 'households', householdId, 'items', itemId), {
-    ...input,
-    updatedAt: Timestamp.now(),
-  });
+  await updateDoc(doc(db, 'households', householdId, 'items', itemId),
+    omitUndefined({ ...input, updatedAt: Timestamp.now() }),
+  );
 }
 
 export async function deleteItem(householdId: string, itemId: string): Promise<void> {
