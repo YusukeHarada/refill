@@ -37,7 +37,15 @@ export function useItems(householdId?: string, sortOrder: SortOrder = 'deadline'
     );
 
     const unsub = onSnapshot(q, (snap) => {
-      const raw = snap.docs.map((d) => ({ id: d.id, ...d.data() } as StockItem));
+      const raw = snap.docs.map((d) => {
+        const data = d.data();
+        return {
+          id: d.id,
+          ...data,
+          // typeフィールドがない既存ドキュメントは 'item' として扱う
+          type: data.type ?? 'item',
+        } as StockItem;
+      });
       const filtered = filterCategory ? raw.filter((i) => i.category === filterCategory) : raw;
       setItems(sortItems(filtered, sortOrder));
       setLoading(false);
