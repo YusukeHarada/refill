@@ -1,6 +1,6 @@
 'use client';
 
-import { Home, HeartPulse, Utensils, Package, Sparkles, Wrench, RefreshCw, Plus, Pencil, Trash2, CheckCircle2 } from 'lucide-react';
+import { Home, Utensils, Package, Sparkles, Wrench, RefreshCw, Plus, Pencil, Trash2, CheckCircle2 } from 'lucide-react';
 import { ProgressBar } from './ProgressBar';
 import { Button } from '@/components/ui/Button';
 import { cn, getProgressRatio, getRemainingDays, getStatusColor, formatCurrency, formatRemainingDays, getDailyCost } from '@/lib/utils';
@@ -8,7 +8,6 @@ import type { Category, StockItem } from '@/types';
 
 const CategoryIcon: Record<Category, React.ComponentType<{ className?: string }>> = {
   '日用品': Home,
-  'ヘルスケア': HeartPulse,
   '食品': Utensils,
   'ハウスワーク': Sparkles,
   '定期メンテナンス': Wrench,

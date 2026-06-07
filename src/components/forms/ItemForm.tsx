@@ -8,8 +8,7 @@ import { CATEGORIES_BY_TYPE } from '@/types';
 import type { ItemType, StockItem, StockItemInput, Category } from '@/types';
 
 const CATEGORY_HELP: Record<Category, string> = {
-  '日用品':       'シャンプー・洗剤・トイレットペーパーなど',
-  'ヘルスケア':   'サプリ・コンタクト・薬・歯ブラシなど',
+  '日用品':       'シャンプー・洗剤・サプリ・コンタクト・薬など',
   '食品':         'プロテイン・調味料・保存食など',
   'ハウスワーク': '掃除・洗濯など定期的な家事',
   '定期メンテナンス': 'エアコン掃除・オイル交換・電池交換など',

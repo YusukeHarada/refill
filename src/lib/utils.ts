@@ -50,7 +50,6 @@ export function getTotalYearlyCost(items: StockItem[]): number {
 export function getCostByCategory(items: StockItem[]): Record<Category, number> {
   const result: Record<Category, number> = {
     '日用品': 0,
-    'ヘルスケア': 0,
     '食品': 0,
     'ハウスワーク': 0,
     '定期メンテナンス': 0,

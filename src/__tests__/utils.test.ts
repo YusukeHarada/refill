@@ -258,7 +258,7 @@ describe('getTotalYearlyCost', () => {
 describe('getCostByCategory', () => {
   it('全カテゴリのキーが返る', () => {
     const result = getCostByCategory([]);
-    expect(Object.keys(result)).toEqual(['日用品', 'ヘルスケア', '食品', 'ハウスワーク', '定期メンテナンス', 'その他']);
+    expect(Object.keys(result)).toEqual(['日用品', '食品', 'ハウスワーク', '定期メンテナンス', 'その他']);
   });
 
   it('空リストは全カテゴリ 0', () => {
@@ -268,14 +268,13 @@ describe('getCostByCategory', () => {
 
   it('カテゴリ別に月間コストを集計する', () => {
     const items = [
-      makeItem({ category: '日用品',   price: 300, cycleDays: 30 }), // ¥300/月
-      makeItem({ category: 'ヘルスケア', price: 600, cycleDays: 30 }), // ¥600/月
-      makeItem({ category: '日用品',   price: 300, cycleDays: 30 }), // ¥300/月
+      makeItem({ category: '日用品', price: 300, cycleDays: 30 }), // ¥300/月
+      makeItem({ category: '食品',   price: 600, cycleDays: 30 }), // ¥600/月
+      makeItem({ category: '日用品', price: 300, cycleDays: 30 }), // ¥300/月
     ];
     const result = getCostByCategory(items);
     expect(result['日用品']).toBeCloseTo(600);
-    expect(result['ヘルスケア']).toBeCloseTo(600);
-    expect(result['食品']).toBe(0);
+    expect(result['食品']).toBeCloseTo(600);
     expect(result['ハウスワーク']).toBe(0);
     expect(result['定期メンテナンス']).toBe(0);
     expect(result['その他']).toBe(0);

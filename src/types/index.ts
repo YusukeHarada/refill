@@ -4,7 +4,6 @@ export type ItemType = 'item' | 'task';
 
 export type Category =
   | '日用品'
-  | 'ヘルスケア'
   | '食品'
   | 'ハウスワーク'
   | '定期メンテナンス'
@@ -12,7 +11,6 @@ export type Category =
 
 export const CATEGORIES: Category[] = [
   '日用品',
-  'ヘルスケア',
   '食品',
   'ハウスワーク',
   '定期メンテナンス',
@@ -20,13 +18,12 @@ export const CATEGORIES: Category[] = [
 ];
 
 export const CATEGORIES_BY_TYPE: Record<ItemType, Category[]> = {
-  item: ['日用品', 'ヘルスケア', '食品', 'その他'],
+  item: ['日用品', '食品', 'その他'],
   task: ['ハウスワーク', '定期メンテナンス', 'その他'],
 };
 
 export const CATEGORY_ICONS: Record<Category, string> = {
   '日用品': 'home',
-  'ヘルスケア': 'heart-pulse',
   '食品': 'utensils',
   'ハウスワーク': 'sparkles',
   '定期メンテナンス': 'wrench',
