@@ -35,6 +35,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setProfile(null);
       }
       setLoading(false);
+    }, (error) => {
+      console.error('auth state error:', error);
+      setLoading(false);
     });
     return unsubscribe;
   }, []);

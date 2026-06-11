@@ -51,6 +51,9 @@ export function useItems(householdId?: string, sortOrder: SortOrder = 'deadline'
       const filtered = filterCategory ? raw.filter((i) => i.category === filterCategory) : raw;
       setItems(sortItems(filtered, sortOrder));
       setLoading(false);
+    }, (error) => {
+      console.error('items snapshot error:', error);
+      setLoading(false);
     });
 
     return unsub;

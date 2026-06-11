@@ -18,6 +18,9 @@ export function useItemHistory(householdId: string, itemId: string, maxEntries =
     const unsub = onSnapshot(q, (snap) => {
       setHistory(snap.docs.map((d) => ({ id: d.id, ...d.data() } as HistoryEntry)));
       setLoading(false);
+    }, (error) => {
+      console.error('history snapshot error:', error);
+      setLoading(false);
     });
     return unsub;
   }, [householdId, itemId, maxEntries]);

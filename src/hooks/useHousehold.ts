@@ -22,6 +22,9 @@ export function useHousehold(householdId?: string) {
         setHousehold(null);
       }
       setLoading(false);
+    }, (error) => {
+      console.error('household snapshot error:', error);
+      setLoading(false);
     });
     return unsub;
   }, [householdId]);
