@@ -61,16 +61,26 @@ export async function joinHousehold(uid: string, inviteCode: string): Promise<Ho
   if (snap.empty) throw new Error('招待コードが見つかりません');
 
   const docRef = snap.docs[0].ref;
-  const household = { id: snap.docs[0].id, ...snap.docs[0].data() } as Household;
+  const userRef = doc(db, 'users', uid);
+  let result: Household | undefined;
 
-  if (household.members.includes(uid)) {
-    await updateUserHousehold(uid, household.id);
-    return household;
-  }
+  await runTransaction(db, async (tx) => {
+    const householdSnap = await tx.get(docRef);
+    if (!householdSnap.exists()) throw new Error('世帯が見つかりません');
+    const household = { id: householdSnap.id, ...householdSnap.data() } as Household;
 
-  await updateDoc(docRef, { members: [...household.members, uid] });
-  await updateUserHousehold(uid, household.id);
-  return { ...household, members: [...household.members, uid] };
+    if (household.members.includes(uid)) {
+      tx.set(userRef, { householdId: household.id }, { merge: true });
+      result = household;
+    } else {
+      const newMembers = [...household.members, uid];
+      tx.update(docRef, { members: newMembers });
+      tx.set(userRef, { householdId: household.id }, { merge: true });
+      result = { ...household, members: newMembers };
+    }
+  });
+
+  return result!;
 }
 
 export async function getHousehold(householdId: string): Promise<Household | null> {
@@ -148,7 +158,7 @@ export async function refillItem(householdId: string, item: StockItem, uid: stri
     const current = snap.data() as StockItem;
     tx.update(itemDocRef, {
       lastUsedDate: now,
-      stockQuantity: Math.max(0, current.stockQuantity - 1),
+      stockQuantity: Math.max(0, (current.stockQuantity ?? 0) - 1),
       updatedAt: now,
     });
     tx.set(newHistoryRef, { executedAt: now, recordedBy: uid });
@@ -177,7 +187,7 @@ export async function restockItem(
     if (!snap.exists()) return;
     const current = snap.data() as StockItem;
     tx.update(ref, {
-      stockQuantity: current.stockQuantity + count,
+      stockQuantity: (current.stockQuantity ?? 0) + count,
       updatedAt: Timestamp.now(),
     });
   });
