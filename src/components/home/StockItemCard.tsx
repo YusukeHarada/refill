@@ -67,25 +67,21 @@ export function StockItemCard({ item, onRefill, onRestock, onEdit, onDelete, onH
       </div>
 
       {/* Progress bar + days */}
-      {!isOutOfStock ? (
-        <div className="mb-3">
-          <div className="flex items-center justify-between mb-1">
-            <span className={cn('text-xs font-medium', {
-              'text-emerald-600 dark:text-emerald-400': color === 'green',
-              'text-amber-600 dark:text-amber-400': color === 'yellow',
-              'text-red-600 dark:text-red-400': color === 'red',
-            })}>
-              {formatRemainingDays(remaining)}
-            </span>
-            {!isTask && dailyCost > 0 && (
-              <span className="text-xs text-zinc-400">{formatCurrency(dailyCost)}/日</span>
-            )}
-          </div>
-          <ProgressBar ratio={ratio} color={color} />
+      <div className="mb-3">
+        <div className="flex items-center justify-between mb-1">
+          <span className={cn('text-xs font-medium', {
+            'text-emerald-600 dark:text-emerald-400': color === 'green',
+            'text-amber-600 dark:text-amber-400': color === 'yellow',
+            'text-red-600 dark:text-red-400': color === 'red',
+          })}>
+            {formatRemainingDays(remaining)}
+          </span>
+          {!isTask && dailyCost > 0 && (
+            <span className="text-xs text-zinc-400">{formatCurrency(dailyCost)}/日</span>
+          )}
         </div>
-      ) : (
-        <div className="mb-3 h-2 rounded-full bg-zinc-100 dark:bg-zinc-700" />
-      )}
+        <ProgressBar ratio={ratio} color={color} />
+      </div>
 
       {/* Actions */}
       <div className="flex items-center gap-2">
