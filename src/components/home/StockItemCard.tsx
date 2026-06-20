@@ -1,6 +1,6 @@
 'use client';
 
-import { Home, Utensils, Package, Sparkles, Wrench, RefreshCw, Plus, Pencil, Trash2, CheckCircle2, Clock, CalendarDays } from 'lucide-react';
+import { Home, Utensils, Package, Sparkles, Wrench, RefreshCw, Plus, Trash2, CheckCircle2, Clock, CalendarDays } from 'lucide-react';
 import { ProgressBar } from './ProgressBar';
 import { Button } from '@/components/ui/Button';
 import { cn, getProgressRatio, getRemainingDays, getStatusColor, formatCurrency, formatRemainingDays, getDailyCost } from '@/lib/utils';
@@ -34,7 +34,10 @@ export function StockItemCard({ item, onRefill, onRestock, onEdit, onDelete, onH
   const Icon = CategoryIcon[item.category] ?? Package;
 
   return (
-    <div className="bg-white dark:bg-zinc-900 rounded-2xl p-4 shadow-sm border border-zinc-100 dark:border-zinc-800">
+    <div
+      className="bg-white dark:bg-zinc-900 rounded-2xl p-4 shadow-sm border border-zinc-100 dark:border-zinc-800 cursor-pointer active:scale-[0.98] transition-transform"
+      onClick={() => onEdit(item)}
+    >
       {/* Header row */}
       <div className="flex items-start justify-between gap-2 mb-3">
         <div className="flex items-center gap-2 min-w-0">
@@ -84,7 +87,7 @@ export function StockItemCard({ item, onRefill, onRestock, onEdit, onDelete, onH
       </div>
 
       {/* Actions */}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
         {isTask ? (
           // Task: 完了ボタンのみ
           <Button
@@ -128,9 +131,6 @@ export function StockItemCard({ item, onRefill, onRestock, onEdit, onDelete, onH
         </Button>
         <Button variant="ghost" size="icon" onClick={() => onDateCorrect(item)} title="日付修正">
           <CalendarDays className="w-4 h-4" />
-        </Button>
-        <Button variant="ghost" size="icon" onClick={() => onEdit(item)} title="編集">
-          <Pencil className="w-4 h-4" />
         </Button>
         <Button variant="ghost" size="icon" onClick={() => onDelete(item)} title="削除">
           <Trash2 className="w-4 h-4 text-red-400" />
