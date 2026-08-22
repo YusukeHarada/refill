@@ -58,8 +58,8 @@ export default function HomePage() {
   }
 
   async function handleDateCorrect(date: Date) {
-    if (!householdId || !dateCorrectionItem) return;
-    await updateLastUsedDate(householdId, dateCorrectionItem.id, date);
+    if (!householdId || !profile || !dateCorrectionItem) return;
+    await updateLastUsedDate(householdId, dateCorrectionItem.id, date, profile.uid);
   }
 
   if (formState.open) {
