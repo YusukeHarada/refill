@@ -9,6 +9,7 @@ import {
   query,
   where,
   orderBy,
+  limit,
   Timestamp,
   runTransaction,
   getDoc,
@@ -169,10 +170,56 @@ export async function updateLastUsedDate(
   householdId: string,
   itemId: string,
   date: Date,
+  uid: string,
 ): Promise<void> {
-  await updateDoc(doc(db, 'households', householdId, 'items', itemId), {
-    lastUsedDate: Timestamp.fromDate(date),
-    updatedAt: Timestamp.now(),
+  const itemDocRef = doc(db, 'households', householdId, 'items', itemId);
+  const executedAt = Timestamp.fromDate(date);
+
+  // 最新の履歴も書き換えないと、修正した実施日が履歴に残らない
+  const latest = await getDocs(
+    query(historyRef(householdId, itemId), orderBy('executedAt', 'desc'), limit(1)),
+  );
+  const latestHistoryRef = latest.empty
+    ? doc(historyRef(householdId, itemId))
+    : latest.docs[0].ref;
+
+  await runTransaction(db, async (tx) => {
+    const snap = await tx.get(itemDocRef);
+    if (!snap.exists()) return;
+    tx.update(itemDocRef, { lastUsedDate: executedAt, updatedAt: Timestamp.now() });
+    if (latest.empty) {
+      tx.set(latestHistoryRef, { executedAt, recordedBy: uid });
+    } else {
+      tx.update(latestHistoryRef, { executedAt });
+    }
+  });
+}
+
+export async function deleteHistoryEntry(
+  householdId: string,
+  itemId: string,
+  entryId: string,
+): Promise<void> {
+  const itemDocRef = doc(db, 'households', householdId, 'items', itemId);
+  const entryRef = doc(historyRef(householdId, itemId), entryId);
+
+  // 最新の履歴を消したら、item の実施日を一つ前の履歴まで巻き戻す
+  const recent = await getDocs(
+    query(historyRef(householdId, itemId), orderBy('executedAt', 'desc'), limit(2)),
+  );
+  const isLatest = recent.docs[0]?.id === entryId;
+  const previous = isLatest ? recent.docs[1] : undefined;
+
+  await runTransaction(db, async (tx) => {
+    const snap = await tx.get(itemDocRef);
+    if (!snap.exists()) return;
+    tx.delete(entryRef);
+    if (previous) {
+      tx.update(itemDocRef, {
+        lastUsedDate: previous.data().executedAt,
+        updatedAt: Timestamp.now(),
+      });
+    }
   });
 }
 
