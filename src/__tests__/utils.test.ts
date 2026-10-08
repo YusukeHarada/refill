@@ -101,6 +101,13 @@ describe('getElapsedDays', () => {
     const future = new Date(2025, 5, 10);
     expect(getElapsedDays(makeTimestamp(future))).toBe(0);
   });
+
+  it('now を明示的に渡した場合は固定時刻を使い、実行中のシステム時刻を無視する', () => {
+    // freezeDate は使わず、now 引数だけで経過日数が決まることを確認する
+    const lastUsed = new Date(2025, 5, 1);
+    const now = new Date(2025, 5, 11);
+    expect(getElapsedDays(makeTimestamp(lastUsed), now)).toBe(10);
+  });
 });
 
 // ─────────────────────────────────────────────
