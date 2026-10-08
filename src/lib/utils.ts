@@ -14,17 +14,17 @@ export function getDaysDiff(from: Date, to: Date): number {
   return Math.floor((utcTo - utcFrom) / msPerDay);
 }
 
-export function getElapsedDays(lastUsedDate: Timestamp): number {
-  return Math.max(0, getDaysDiff(lastUsedDate.toDate(), new Date()));
+export function getElapsedDays(lastUsedDate: Timestamp, now: Date = new Date()): number {
+  return Math.max(0, getDaysDiff(lastUsedDate.toDate(), now));
 }
 
-export function getRemainingDays(item: StockItem): number {
-  return item.cycleDays - getElapsedDays(item.lastUsedDate);
+export function getRemainingDays(item: StockItem, now: Date = new Date()): number {
+  return item.cycleDays - getElapsedDays(item.lastUsedDate, now);
 }
 
-export function getProgressRatio(item: StockItem): number {
+export function getProgressRatio(item: StockItem, now: Date = new Date()): number {
   if (item.cycleDays <= 0) return 0;
-  const elapsed = getElapsedDays(item.lastUsedDate);
+  const elapsed = getElapsedDays(item.lastUsedDate, now);
   return elapsed / item.cycleDays;
 }
 
