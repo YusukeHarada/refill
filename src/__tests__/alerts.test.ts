@@ -81,6 +81,13 @@ describe('toRefillAlerts', () => {
     expect(alert.detail).toBe('在庫1・あと4日');
   });
 
+  it('在庫があっても期限を過ぎていれば detail は「X日超過」になる', () => {
+    // lastUsedDate 2026-10-01 + cycleDays 1 = dueAt 2026-10-02（3日超過）
+    const item = makeItem({ cycleDays: 1, stockQuantity: 5 });
+    const [alert] = toRefillAlerts([item], NOW);
+    expect(alert.detail).toBe('在庫5・3日超過');
+  });
+
   it('type: task の項目も同じ規則で扱う', () => {
     const item = makeItem({ type: 'task', category: 'ハウスワーク', cycleDays: 4 });
     const [alert] = toRefillAlerts([item], NOW);

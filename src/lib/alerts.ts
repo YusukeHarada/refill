@@ -22,10 +22,9 @@ export function toRefillAlerts(items: StockItem[], now: Date): Alert[] {
 
     if (!isOverdue && !isWarning) continue;
 
-    const detail =
-      item.stockQuantity === 0
-        ? '在庫0'
-        : `在庫${item.stockQuantity}・あと${remainingDays}日`;
+    const remainingLabel =
+      remainingDays < 0 ? `${Math.abs(remainingDays)}日超過` : `あと${remainingDays}日`;
+    const detail = item.stockQuantity === 0 ? '在庫0' : `在庫${item.stockQuantity}・${remainingLabel}`;
 
     alerts.push({
       id: `item-${item.id}`,
