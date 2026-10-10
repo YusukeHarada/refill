@@ -43,6 +43,9 @@ export function toRefillAlerts(items: StockItem[], now: Date): Alert[] {
       });
     }
 
+    // コト(作業)は在庫を持たない(保存時に常に0になる)ため、在庫起因のアラートは出さない
+    if (item.type === 'task') continue;
+
     if (item.stockQuantity === 0) {
       alerts.push({
         id: `item-${item.id}-stock`,

@@ -98,6 +98,13 @@ describe('toRefillAlerts', () => {
       const alerts = toRefillAlerts([item], NOW);
       expect(alerts.find((a) => a.id.endsWith('-stock'))).toBeUndefined();
     });
+
+    it('コト(作業)は在庫0でも在庫起因のアラートを出さず、期限起因のアラートは出す', () => {
+      const task = makeItem({ type: 'task', category: 'ハウスワーク', cycleDays: 4, stockQuantity: 0 });
+      const alerts = toRefillAlerts([task], NOW);
+      expect(alerts.find((a) => a.id.endsWith('-stock'))).toBeUndefined();
+      expect(alerts.find((a) => a.id.endsWith('-cycle'))?.level).toBe('overdue');
+    });
   });
 
   describe('両方該当する場合', () => {
