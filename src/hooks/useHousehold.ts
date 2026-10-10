@@ -12,6 +12,8 @@ export function useHousehold(householdId?: string) {
 
   useEffect(() => {
     if (!householdId) {
+      // householdId未確定時は購読せず即座に空状態へ戻す必要がある
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setLoading(false);
       return;
     }
