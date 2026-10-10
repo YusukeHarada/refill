@@ -88,8 +88,9 @@ describe('GET /api/summary', () => {
     const body = await res.json();
     expect(SummaryResponse.safeParse(body).success).toBe(true);
     expect(body.app).toBe('refill');
-    expect(body.alerts).toHaveLength(1);
-    expect(body.alerts[0].level).toBe('overdue');
+    // cycleDays超過・在庫0の両方に該当するため、期限と在庫で2件のアラートが出る
+    expect(body.alerts).toHaveLength(2);
+    expect(body.alerts.every((a: { level: string }) => a.level === 'overdue')).toBe(true);
   });
 
   it('アイテムが0件でも alerts: [] を返す（200）', async () => {
